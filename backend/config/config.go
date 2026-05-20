@@ -18,11 +18,11 @@ type Config struct {
 func Load() *Config {
 	return &Config{
 		ServerPort: getEnv("SERVER_PORT", "8080"),
-		DBHost:     getEnv("DB_HOST", "123.249.45.216"),
-		DBPort:     getEnv("DB_PORT", "13306"),
+		DBHost:     getEnv("DB_HOST", "127.0.0.1"),
+		DBPort:     getEnv("DB_PORT", "3306"),
 		DBUser:     getEnv("DB_USER", "root"),
-		DBPassword: getEnv("DB_PASSWORD", "Wz102411.."),
-		DBName:     getEnv("DB_NAME", "urltolink"),
+		DBPassword: getEnv("DB_PASSWORD", ""),
+		DBName:     getEnv("DB_NAME", "shortlink"),
 		BaseURL:    getEnv("BASE_URL", "http://localhost:8080"),
 	}
 }

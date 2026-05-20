@@ -22,37 +22,28 @@ RUN npm run build
 
 FROM debian:bookworm-slim
 
-ENV MYSQL_ROOT_PASSWORD=password \
-    MYSQL_DATABASE=shortlink \
-    DB_USER=root \
-    DB_PASSWORD=password \
-    DB_NAME=shortlink \
-    DB_HOST=127.0.0.1 \
+ENV DB_HOST= \
     DB_PORT=3306 \
+    DB_USER= \
+    DB_PASSWORD= \
+    DB_NAME= \
     SERVER_PORT=8080 \
     BASE_URL=http://localhost
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    mariadb-server \
     nginx \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
     && rm -f /etc/nginx/sites-enabled/default
 
-COPY docker/my.cnf /etc/mysql/mariadb.conf.d/99-shortlink.cnf
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/entrypoint.sh /entrypoint.sh
 
 COPY --from=backend-builder /build/server /app/server
 COPY --from=frontend-builder /build/dist /usr/share/nginx/html
 
-RUN sed -i 's/\r$//' /entrypoint.sh \
-    && chmod +x /entrypoint.sh \
-    && mkdir -p /var/run/mysqld \
-    && chown -R mysql:mysql /var/run/mysqld /var/lib/mysql
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
-VOLUME ["/var/lib/mysql"]
-
-EXPOSE 80 3306
+EXPOSE 80
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
