@@ -1,0 +1,20 @@
+# Go
+backend/bin/
+backend/*.exe
+backend/*.test
+
+# Env
+.env
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Docker
+docker-images/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
