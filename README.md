@@ -105,12 +105,12 @@ docker load -i shortlink.tar
 
 docker run -d --name shortlink \
   -p 8480:80 \
-  -e DB_HOST=123.249.45.216 \
+  -e DB_HOST=127.0.0.1 \
   -e DB_PORT=3306 \
   -e DB_USER=root \
   -e DB_PASSWORD='your_password' \
   -e DB_NAME=urltolink \
-  -e BASE_URL=https://link.arongwang.xyz \
+  -e BASE_URL=https://demon.com \
   shortlink:latest
 ```
 
