@@ -46,7 +46,8 @@ COPY docker/entrypoint.sh /entrypoint.sh
 COPY --from=backend-builder /build/server /app/server
 COPY --from=frontend-builder /build/dist /usr/share/nginx/html
 
-RUN chmod +x /entrypoint.sh \
+RUN sed -i 's/\r$//' /entrypoint.sh \
+    && chmod +x /entrypoint.sh \
     && mkdir -p /var/run/mysqld \
     && chown -R mysql:mysql /var/run/mysqld /var/lib/mysql
 
@@ -54,4 +55,4 @@ VOLUME ["/var/lib/mysql"]
 
 EXPOSE 80 3306
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

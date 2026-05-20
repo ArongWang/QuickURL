@@ -6,8 +6,9 @@ OUTPUT_DIR="${ROOT_DIR}/docker-images"
 
 mkdir -p "${OUTPUT_DIR}"
 
-echo "==> Building all-in-one image with docker compose..."
+echo "==> Building all-in-one image for linux/amd64 (typical Linux servers)..."
 export BUILDX_NO_DEFAULT_ATTESTATIONS=1
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 docker compose -f "${ROOT_DIR}/docker-compose.yml" build
 
 echo "==> Saving image to ${OUTPUT_DIR}/shortlink.tar ..."

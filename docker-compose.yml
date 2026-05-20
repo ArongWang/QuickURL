@@ -2,6 +2,7 @@ name: shortlink
 
 services:
   app:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile

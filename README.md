@@ -111,10 +111,10 @@ chmod +x scripts/build-images.sh
 docker load -i shortlink.tar
 
 docker run -d --name shortlink \
-  -p 80:80 -p 3306:3306 \
-  -e MYSQL_ROOT_PASSWORD=your_password \
+  -p 8480:80 -p 8306:3306 \
+  -e MYSQL_ROOT_PASSWORD=wz102411.. \
   -e MYSQL_DATABASE=urltolink \
-  -e BASE_URL=https://your-domain.com \
+  -e BASE_URL=https://link.arongwang.xyz \
   -v shortlink_mysql:/var/lib/mysql \
   shortlink:latest
 ```
