@@ -24,6 +24,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      provenance: false
+      sbom: false
     image: shortlink-backend:latest
     container_name: shortlink-backend
     restart: unless-stopped
@@ -45,6 +47,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      provenance: false
+      sbom: false
     image: shortlink-frontend:latest
     container_name: shortlink-frontend
     restart: unless-stopped

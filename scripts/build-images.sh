@@ -7,6 +7,7 @@ OUTPUT_DIR="${ROOT_DIR}/docker-images"
 mkdir -p "${OUTPUT_DIR}"
 
 echo "==> Building images with docker compose..."
+export BUILDX_NO_DEFAULT_ATTESTATIONS=1
 docker compose -f "${ROOT_DIR}/docker-compose.yml" build
 
 echo "==> Saving images to ${OUTPUT_DIR}..."
