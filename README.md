@@ -70,63 +70,59 @@ npm run dev
 | DB_NAME | shortlink | 数据库名 |
 | BASE_URL | http://localhost:8080 | 短链前缀 |
 
-## Docker 部署
+## Docker 部署（单容器：MySQL + 后端 + 前端）
 
-### 一键启动（构建并运行）
+所有服务打包在一个镜像 `shortlink:latest` 中，容器内通过 `127.0.0.1:3306` 连接 MySQL。
 
-```bash
-cp .env.docker.example .env.docker   # 按需修改
-docker compose --env-file .env.docker up -d --build
-```
-
-访问：http://localhost
-
-- 前端页面：`/`
-- API 接口：`/api/*`
-- 短链跳转：`/{6位短码}`（经 Nginx 转发到后端）
-
-### 仅构建镜像
+### 一键启动
 
 ```bash
-docker compose build
+cp .env.docker.example .env.docker   # 按需修改账号密码
+docker compose up -d --build
 ```
 
-构建完成后本地镜像：
+访问：`BASE_URL` 配置的地址（默认 http://localhost）
 
-- `shortlink-backend:latest`
-- `shortlink-frontend:latest`
+### 环境变量（.env.docker）
 
-### 导出镜像文件（tar）
+| 变量 | 说明 |
+|------|------|
+| MYSQL_ROOT_PASSWORD | MySQL root 密码（必填） |
+| MYSQL_DATABASE | 数据库名 |
+| DB_USER | 后端连接用户，默认 `root` |
+| DB_PASSWORD | 后端连接密码，**留空则自动使用 MYSQL_ROOT_PASSWORD** |
+| DB_NAME | 后端连接数据库，**留空则自动使用 MYSQL_DATABASE** |
+| BASE_URL | 短链前缀，需与对外访问域名一致 |
+| APP_PORT | 对外 HTTP 端口，默认 80 |
+| MYSQL_PORT | 对外 MySQL 端口，默认 3306 |
+
+### 构建并导出单个 tar 镜像
 
 ```bash
 chmod +x scripts/build-images.sh
 ./scripts/build-images.sh
 ```
 
-会在 `docker-images/` 目录生成：
+生成：`docker-images/shortlink.tar`
 
-- `shortlink-backend.tar`
-- `shortlink-frontend.tar`
-
-在目标机器导入：
+### 在目标机器运行
 
 ```bash
-docker load -i shortlink-backend.tar
-docker load -i shortlink-frontend.tar
+docker load -i shortlink.tar
+
+docker run -d --name shortlink \
+  -p 80:80 -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=your_password \
+  -e MYSQL_DATABASE=urltolink \
+  -e BASE_URL=https://your-domain.com \
+  -v shortlink_mysql:/var/lib/mysql \
+  shortlink:latest
 ```
 
-### Docker 环境变量
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| MYSQL_ROOT_PASSWORD | password | MySQL root 密码 |
-| MYSQL_DATABASE | shortlink | 数据库名 |
-| MYSQL_PORT | 3306 | MySQL 对外端口 |
-| APP_PORT | 80 | 前端对外端口 |
-| BASE_URL | http://localhost | 短链前缀（需与对外访问地址一致） |
+> 数据持久化目录：`/var/lib/mysql`，建议挂载 volume。
 
 ## 技术栈
 
 - **后端**：Go、Gin、GORM、MySQL
 - **前端**：Vue 3、Vite、Axios
-- **部署**：Docker、Nginx
+- **部署**：Docker（MariaDB + Nginx + Go 单容器）

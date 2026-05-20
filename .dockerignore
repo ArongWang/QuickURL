@@ -1,0 +1,9 @@
+.git
+.gitignore
+docker-images/
+frontend/node_modules/
+frontend/dist/
+backend/bin/
+backend/.env
+.env.docker
+README.md

@@ -1,61 +1,26 @@
 name: shortlink
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: shortlink-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-shortlink}
-    ports:
-      - "${MYSQL_PORT:-3306}:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 20s
-
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
       provenance: false
       sbom: false
-    image: shortlink-backend:latest
-    container_name: shortlink-backend
+    image: shortlink:latest
+    container_name: shortlink
     restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
-    environment:
-      SERVER_PORT: 8080
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
-      DB_NAME: ${MYSQL_DATABASE:-shortlink}
-      BASE_URL: ${BASE_URL:-http://localhost}
-    expose:
-      - "8080"
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      provenance: false
-      sbom: false
-    image: shortlink-frontend:latest
-    container_name: shortlink-frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
+    env_file:
+      - .env.docker
     ports:
       - "${APP_PORT:-80}:80"
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      SERVER_PORT: 8080
+    volumes:
+      - mysql_data:/var/lib/mysql
 
 volumes:
   mysql_data:
